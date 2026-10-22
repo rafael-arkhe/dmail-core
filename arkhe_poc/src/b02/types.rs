@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize, Serializer};
+use serde::{Deserialize, Serialize, Serializer};
 
 use ciborium::Value;
 
@@ -64,7 +64,10 @@ pub enum ScopeExpr {
 #[serde(tag = "kind")]
 pub enum SubjectRef {
     #[serde(rename = "digest")]
-    Digest { #[serde(with = "serde_bytes")] value: Digest },
+    Digest {
+        #[serde(with = "serde_bytes")]
+        value: Digest,
+    },
     #[serde(rename = "id")]
     Id { value: String },
 }
@@ -349,9 +352,7 @@ mod tests {
 
     #[test]
     fn test_policy_ref() {
-        let policy_ref = PolicyRef {
-            digest: [1u8; 32],
-        };
+        let policy_ref = PolicyRef { digest: [1u8; 32] };
         let cbor = canonical_cbor(&policy_ref);
         assert!(!cbor.is_empty());
         let digest = object_digest(DOMAIN_POLICY, &policy_ref);
